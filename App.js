@@ -1,20 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-gesture-handler';
+//import Navigator from './components/Drawer';  // Commented out as Drawer.js is not working
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
+
+import Home from './components/Home';
+import Hotspot from './components/Hotspot';
+import Global from './components/Global';
+
+const DrawerNav = createDrawerNavigator();
 
 export default function App() {
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <DrawerNav.Navigator initialRouteName="Home">
+        <DrawerNav.Screen name="Home" component={Home} />
+        <DrawerNav.Screen name="Hot-spot" component={Hotspot} />
+        <DrawerNav.Screen name="Global" component={Global} />
+      </DrawerNav.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
