@@ -11,9 +11,10 @@ export default function Header() {
 
 const styles = StyleSheet.create({
     headerContainer: {
-        height: 60,
+        height: 100,
         backgroundColor: 'gray',
-        paddingTop: 10,
+        marginTop: 50,
+        
     },
     textItem: {
         textAlign:'center',

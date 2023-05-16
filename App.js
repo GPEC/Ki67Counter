@@ -1,13 +1,22 @@
 import 'react-native-gesture-handler';
-//import Navigator from './components/Drawer';  // Commented out as Drawer.js is not working
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import Home from './components/Home';
-import Hotspot from './components/Hotspot';
+import HotspotStack from './components/Hotspot/HotspotStack';
 import Global from './components/Global';
 
 const DrawerNav = createDrawerNavigator();
+
+function getHeaderTitle(route) {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Hot-spot';
+  switch (routeName) {
+    case 'Hot-spot':
+      return 'Hot-spot';
+    case 'HotspotResults':
+      return 'Hot-spot Results';
+  }
+}
 
 export default function App() {
 
@@ -15,11 +24,12 @@ export default function App() {
     <NavigationContainer>
       <DrawerNav.Navigator initialRouteName="Home">
         <DrawerNav.Screen name="Home" component={Home} />
-        <DrawerNav.Screen name="Hot-spot" component={Hotspot} />
+        <DrawerNav.Screen name="Hotspot" component={HotspotStack} 
+          options={({ route }) => ({
+            headerTitle: getHeaderTitle(route),
+          })}/>
         <DrawerNav.Screen name="Global" component={Global} />
       </DrawerNav.Navigator>
     </NavigationContainer>
   );
 }
-
-

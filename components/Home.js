@@ -6,7 +6,7 @@ export default function Home({navigation}) {
       navigation.openDrawer();
     }
 
-    const handleLinkPress1 = () => {
+    const handleLinkPress1 = () => { 
       Linking.openURL('https://www.nature.com/articles/npjbcancer201614');
     };
   
@@ -16,6 +16,7 @@ export default function Home({navigation}) {
 
     return (
         <View style={styles.container}>
+          
           <View style={styles.imageContainer}>
               <Image 
               source={require('../assets/mainScreenLogo.png')} 
