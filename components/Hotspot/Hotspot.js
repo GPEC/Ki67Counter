@@ -1,111 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native'
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 
-import { Audio } from 'expo-av';
+//import { Audio } from 'expo-av';
+import { CounterSounds } from '../../app/counterSounds';
 
 export default function Hotspot({navigation}) {
 
-    const [countNegative, setCountNegative] = useState(0);
-    const [countPositive, setCountPositive] = useState(0);
-    
-    const [posSound, setPosSound] = React.useState();
-    const [negSound, setNegSound] = React.useState();
-    const [doneSound, setDoneSound] = React.useState();
-
     const threshold = 5;
-    const totalCounted = countPositive + countNegative;
 
-    const score = Math.round((countPositive/totalCounted)*1000)/10;
-
-    const onClickNegative = () => {
-        playNegSound();
-        setCountNegative(countNegative+1);
-    }
-
-    const onClickPositive = () => {
-        playPosSound();
-        setCountPositive(countPositive+1);
-    }
-
-    const resetCounts = () => {
-        setCountNegative(0);
-        setCountPositive(0);
-    }
+    let counterSoundsObj = new CounterSounds(threshold);
 
     const showResult = () => {
-        navigation.navigate('HotspotResults', {positive: countPositive, negative: countNegative, finalScore: score, resetScores: resetCounts});
-    }
-
-    async function playPosSound() {
-        try {
-            const { sound } = await Audio.Sound.createAsync( require('../../assets/Click01.wav') );
-            setPosSound(sound);
-            
-            console.log('Playing Pos Sound');
-            await sound.playAsync();
-        } catch(error) {
-            console.log('Error playing positive sound:', error);
-        }
-    }
-
-    async function playNegSound() {
-        try {
-            const { sound } = await Audio.Sound.createAsync( require('../../assets/beep_09.wav') );
-            setNegSound(sound);
-            
-            console.log('Playing Neg Sound');
-            await sound.playAsync();
-        } catch(error) {
-            console.log('Error playing negative sound:', error);
-        }
-    }
-
-    async function playDoneSound() {
-        try {
-            const { sound } = await Audio.Sound.createAsync( require('../../assets/DingLing.wav') );
-            setDoneSound(sound);
-
-            console.log('Playing Done Sound');
-            await sound.playAsync();
-        } catch (error) {
-          console.log('Error playing done sound:', error);
-        }
+        navigation.navigate('HotspotResults', {
+            positive: counterSoundsObj.getCountPositive(), 
+            negative: counterSoundsObj.getCountNegative(), 
+            finalScore: counterSoundsObj.score, 
+            resetScores: counterSoundsObj.resetCounts
+        });
     }
 
     const showAlert = () => {
-        playDoneSound();  
-        Alert.alert(  
-            `Hot-spot score: ${score}%`,  
-            `Negative nuclei counted: ${countNegative} \n` +
-            `Positive nuclei counted: ${countPositive} \n` +
-            `Total nuclei counted: ${totalCounted}`,  
+        counterSoundsObj.doneSound();
+        Alert.alert(
+            `Hot-spot score: ${counterSoundsObj.score}%`,  
+            `Negative nuclei counted: ${counterSoundsObj.getCountNegative()} \n` +
+            `Positive nuclei counted: ${counterSoundsObj.getCountPositive()} \n` +
+            `Total nuclei counted: ${counterSoundsObj.totalCounted()}`,
             [{
                 text: 'OK'
-            }]  
-        );  
-    }  
+            }]
+        );
+    } 
 
     useEffect(() => {
-        if (countNegative+countPositive >= threshold) {
-            showAlert(); 
+        if (counterSoundsObj.getCountNegative() + counterSoundsObj.getCountPositive() >= threshold) {
+            showAlert();
         }
-    }, [countNegative, countPositive]);
+    }, [counterSoundsObj.countPositive, counterSoundsObj.countNegative]);
 
     // Clean up resources when the component unmounts
     useEffect(() => {
         return () => {
-          console.log("Unloading sounds")
-          if (posSound) {
-            posSound.unloadAsync();
-          }
-          if (negSound) {
-            negSound.unloadAsync();
-          }
-          if (doneSound) {
-            doneSound.unloadAsync();
-          }
+            return counterSoundsObj.unloadSounds();
         };
-      }, []);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -114,18 +52,18 @@ export default function Hotspot({navigation}) {
             <View style={styles.counterContainer}>
                 <View style={styles.rowStyle}>
                     <View style={styles.colStyle}>
-                        <Text style={styles.counterText}>{countNegative}</Text>
-                        <Button title='Negative' onPress={onClickNegative} />
+                        <Text style={styles.counterText}>{counterSoundsObj.getCountNegative()}</Text>
+                        <Button title='Negative' onPress={counterSoundsObj.onClickNegative} />
                     </View>
                     <View style={styles.colStyle}>
-                        <Text style={styles.counterText}>{countPositive}</Text>
-                        <Button title='Positive' onPress={onClickPositive} />
+                        <Text style={styles.counterText}>{counterSoundsObj.getCountPositive()}</Text>
+                        <Button title='Positive' onPress={counterSoundsObj.onClickPositive} />
                     </View>
                 </View>
             </View>
 
             <View style={styles.resetButtonContainer}>
-                <Button style={styles.resetButton} color='red' title='Reset' onPress={resetCounts} />
+                <Button style={styles.resetButton} color='red' title='Reset' onPress={counterSoundsObj.resetCounts} />
             </View>
 
             <View style={styles.showResultButtonContainer}>

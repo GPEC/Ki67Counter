@@ -6,7 +6,7 @@ export default function Home({navigation}) {
       navigation.openDrawer();
     }
 
-    const handleLinkPress1 = () => { 
+    const handleLinkPress1 = () => {
       Linking.openURL('https://www.nature.com/articles/npjbcancer201614');
     };
   
@@ -19,9 +19,9 @@ export default function Home({navigation}) {
           
           <View style={styles.imageContainer}>
               <Image 
-              source={require('../assets/mainScreenLogo.png')} 
-              style={styles.image}
-              resizeMode='contain'
+                source={require('../assets/mainScreenLogo.png')} 
+                style={styles.image}
+                resizeMode='contain'
               />
           </View>
           <Text style={styles.mainText}>
@@ -36,8 +36,7 @@ export default function Home({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      //backgroundColor: '#fff',
+      flex: 1
     },
     mainText: {
       margin:10,
@@ -51,13 +50,14 @@ const styles = StyleSheet.create({
     imageContainer: {
       margin: 5,
       width: Dimensions.get('window').width - 24, // Set the container width to be the width of the screen minus some padding
-      height: 140, // Set a fixed height for the container
+      height: 140
     },
     image: {
-      width: '100%', // Set the image width to be the full width of its container
-      height: '100%',
+      width: '100%',
+      height: '100%'
     },
     link: {
       color: 'blue',
-    },
-  });
+      textDecorationLine: 'underline'
+    }
+});
