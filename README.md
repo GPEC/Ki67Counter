@@ -3,7 +3,7 @@ Ki67 Counter
 
 This project is made with React Native Expo
 
-// Installing expo-cli
+// Installing expo-cli (Requirement: Ensure you have npm)
 >> npm install -g expo-cli
 
 After installing expo cli, go to the root of the folder and open command prompt.
