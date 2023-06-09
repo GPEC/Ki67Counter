@@ -15,12 +15,6 @@ export default function FieldsStack({route}) {
     let numHigh = sfa.getNumHigh();
     const totalScreens = ki67Score.showNumFields();
 
-    console.log('numNeg:', numNeg);
-    console.log('numLow:', numLow);
-    console.log('numMed:', numMed);
-    console.log('numHigh:', numHigh);
-    console.log('totalScreens:', totalScreens);
-
     const screenNames = [...Array(totalScreens)].map((_, index) => `Field ${index + 1}`);
 
     const getFieldName = () => {
@@ -48,10 +42,8 @@ export default function FieldsStack({route}) {
                 const nextScreen = index === totalScreens - 1 ? 'Report' : screenNames[index + 1]; // Determine the next screen name
 
                 const fieldType = getFieldName();
-                console.log("type? ", fieldType);
                 
                 const color = getColor(fieldType);
-                console.log("rang? ", color);
 
                 const FieldComponent = ({ navigation }) => (
                     <Field

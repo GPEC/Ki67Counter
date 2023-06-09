@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, StyleSheet, Button, Platform } from 'react-native';
+import { Overlay } from 'react-native-elements';
 import { Audio } from 'expo-av';
 
 export default function Field ( {navigation, fieldType, nextScreen, ki67Score, index} ) {
 
+    // function to display text for the next page button
     const nextButtonText = () => {
         if (nextScreen==='Report')
             return 'Show Score';
         return 'Next Field';
     }
+
+    const [isInitialRender, setIsInitialRender] = useState(true);
+    const [isAlertShown, setIsAlertShown] = useState(false);
 
     const [countNegative, setCountNegative] = useState(ki67Score.getFieldByIndex(index).negCount);
     const [countPositive, setCountPositive] = useState(ki67Score.getFieldByIndex(index).posCount);
@@ -18,18 +24,19 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
     const [doneSound, setDoneSound] = React.useState();
 
     const threshold = 100;
-    const totalCounted = countPositive + countNegative;
-
-    const score = Math.round((countPositive/totalCounted)*1000)/10;
 
     const onClickNegative = () => {
+        if(isInitialRender)
+            setIsInitialRender(false);
         playNegSound();
-        setCountNegative(countNegative+1);
+        setCountNegative((prev)=> prev+1);
     }
 
     const onClickPositive = () => {
+        if(isInitialRender)
+            setIsInitialRender(false);
         playPosSound(); 
-        setCountPositive(countPositive+1);
+        setCountPositive((prev)=> prev+1);
     }
 
     const resetCounts = () => {
@@ -37,10 +44,14 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
         setCountPositive(0);
     }
 
+    // function to handle navigation to the next screen
     const goToNextScreen = () => {
 
+        // Saving the values whenever we go to the next screen
         ki67Score.setNegCount(index, countNegative);
         ki67Score.setPosCount(index, countPositive);
+
+        setIsInitialRender(true);
 
         if (nextScreen==='Report')
             navigation.navigate(nextScreen, {ki67Score});
@@ -52,6 +63,11 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
         try {
             const { sound } = await Audio.Sound.createAsync( require('../../assets/Click01.wav') );
             setPosSound(sound);
+            sound.setOnPlaybackStatusUpdate((status) => {
+                if (status.didJustFinish) {
+                  sound.unloadAsync(); // Unload the sound when it finishes playing
+                }
+            });
             
             console.log('Playing Pos Sound');
             await sound.playAsync();
@@ -64,6 +80,11 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
         try {
             const { sound } = await Audio.Sound.createAsync( require('../../assets/beep_09.wav') );
             setNegSound(sound);
+            sound.setOnPlaybackStatusUpdate((status) => {
+                if (status.didJustFinish) {
+                  sound.unloadAsync(); // Unload the sound when it finishes playing
+                }
+            });
             
             console.log('Playing Neg Sound');
             await sound.playAsync();
@@ -76,44 +97,60 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
         try {
             const { sound } = await Audio.Sound.createAsync( require('../../assets/DingLing.wav') );
             setDoneSound(sound);
+            sound.setOnPlaybackStatusUpdate((status) => {
+                if (status.didJustFinish) {
+                  sound.unloadAsync(); // Unload the sound when it finishes playing
+                }
+            });
 
             console.log('Playing Done Sound');
             await sound.playAsync();
         } catch (error) {
           console.log('Error playing done sound:', error);
         }
-    }
+    } 
 
-    const showAlert = () => {
-        playDoneSound();  
-        Alert.alert(  
-            "Enough nuclei counted",  
-            "Please press button below to continue",  
-            [{
-                text: 'OK'
-            }]  
-        );  
-    }  
+    // listener to show the alert when positive and negative values exceed threshold
+    useFocusEffect(
+        React.useCallback(() => {
+            if (!isInitialRender && (countNegative + countPositive >= threshold)) {
+                playDoneSound();  
+                setIsAlertShown(true); 
+            }
+        }, [countNegative, countPositive, isInitialRender])
+    );
 
+    // Listener triggered with every change, used to monitor keyboard input
     useEffect(() => {
-        if (countNegative+countPositive >= threshold) {
-            showAlert(); 
+        
+        let handleKeyPress;
+        if (Platform.OS === 'web') {
+            handleKeyPress = (event) => {
+                if (event.code === 'KeyA') {
+                    onClickNegative();
+                } else if (event.code === 'KeyD') {
+                    onClickPositive();
+                }
+            };
+        
+            document.addEventListener('keydown', handleKeyPress);
         }
-    }, [countNegative, countPositive]);
 
-    // Clean up resources when the component unmounts
-    useEffect(() => {
+        // Clean up resources when the component unmounts
         return () => {
-          console.log("Unloading sounds")
-          if (posSound) {
-            posSound.unloadAsync();
-          }
-          if (negSound) {
-            negSound.unloadAsync();
-          }
-          if (doneSound) {
-            doneSound.unloadAsync();
-          }
+            console.log("Unloading sounds")
+            if (posSound) {
+                posSound.unloadAsync();
+            }
+            if (negSound) {
+                negSound.unloadAsync();
+            }
+            if (doneSound) {
+                doneSound.unloadAsync();
+            }
+            if (Platform.OS === 'web') {
+                document.removeEventListener('keydown', handleKeyPress);
+            }
         };
       }, []);
 
@@ -143,6 +180,14 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
             <View style={styles.showResultButtonContainer}>
                 <Button color='purple' title={nextButtonText()} onPress={goToNextScreen} />
             </View>
+
+            <Overlay isVisible={isAlertShown}>
+                <Text style={styles.alertTitle}>Enough nuclei counted</Text>
+                <Text style={styles.alertText}>Please press button below to continue.</Text>
+                <View style={styles.alertButton}>
+                    <Button title="OK" onPress={() => setIsAlertShown(false)} />
+                </View>
+            </Overlay>
 
         </View>
     )
@@ -186,4 +231,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 120,
     },
+    alertText: {
+        marginLeft: 15,
+        marginRight: 15
+    },
+    alertTitle: {
+        fontWeight:'bold', 
+        fontSize:15,
+        margin: 15
+    },
+    alertButton: {
+        margin: 15
+    }
 })

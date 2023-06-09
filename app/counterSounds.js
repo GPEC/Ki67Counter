@@ -1,129 +1,83 @@
-import { Audio } from 'expo-av';
-import React, { useState } from 'react';
-
-export class CounterSounds {
+// import { Audio } from 'expo-av';
+// import { Platform } from 'react-native';
+// import React from 'react';
+// export class CounterSounds {
     
-    constructor(threshold) {
+//     constructor() {
 
-        [this.countNegative, this.setCountNegative] = useState(0);
-        [this.countPositive, this.setCountPositive] = useState(0);
-        
-        const [posSound, setPosSound] = React.useState();
-        const [negSound, setNegSound] = React.useState();
-        const [doneSound, setDoneSound] = React.useState();
+//         const [posSound, setPosSound] = React.useState();
+//         const [negSound, setNegSound] = React.useState();
+//         const [doneSound, setDoneSound] = React.useState();
 
-        async function playPosSound() {
-            try {
-                const { sound } = await Audio.Sound.createAsync( require('../assets/Click01.wav') );
-                setPosSound(sound);
+//         async function playPosSound() {
+//             try {
+//                 const { sound } = await Audio.Sound.createAsync( require('../assets/Click01.wav') );
+//                 setPosSound(sound);
+//                 sound.setOnPlaybackStatusUpdate((status) => {
+//                     if (status.didJustFinish) {
+//                       sound.unloadAsync(); // Unload the sound when it finishes playing
+//                     }
+//                 });
                 
-                console.log('Playing Pos Sound');
-                await sound.playAsync();
-            } catch(error) {
-                console.log('Error playing positive sound:', error);
-            }
-        }
+//                 console.log('Playing Pos Sound');
+//                 await sound.playAsync();
+//             } catch(error) {
+//                 console.log('Error playing positive sound:', error);
+//             }
+//         }
         
-        async function playNegSound() {
-            try {
-                const { sound } = await Audio.Sound.createAsync( require('../assets/beep_09.wav') );
-                setNegSound(sound);
+//         async function playNegSound() {
+//             try {
+//                 const { sound } = await Audio.Sound.createAsync( require('../assets/beep_09.wav') );
+//                 setNegSound(sound);
+//                 sound.setOnPlaybackStatusUpdate((status) => {
+//                     if (status.didJustFinish) {
+//                       sound.unloadAsync(); // Unload the sound when it finishes playing
+//                     }
+//                 });
                 
-                console.log('Playing Neg Sound');
-                await sound.playAsync();
-            } catch(error) {
-                console.log('Error playing negative sound:', error);
-            }
-        }
+//                 console.log('Playing Neg Sound');
+//                 await sound.playAsync();
+//             } catch(error) {
+//                 console.log('Error playing negative sound:', error);
+//             }
+//         }
         
-        async function playDoneSound() {
-            try {
-                const { sound } = await Audio.Sound.createAsync( require('../assets/DingLing.wav') );
-                setDoneSound(sound);
+//         async function playDoneSound() {
+//             try {
+//                 const { sound } = await Audio.Sound.createAsync( require('../assets/DingLing.wav') );
+//                 setDoneSound(sound);
+//                 sound.setOnPlaybackStatusUpdate((status) => {
+//                     if (status.didJustFinish) {
+//                       sound.unloadAsync(); // Unload the sound when it finishes playing
+//                     }
+//                 });
         
-                console.log('Playing Done Sound');
-                await sound.playAsync();
-            } catch (error) {
-              console.log('Error playing done sound:', error);
-            }
-        }        
+//                 console.log('Playing Done Sound');
+//                 await sound.playAsync();
+//             } catch (error) {
+//               console.log('Error playing done sound:', error);
+//             }
+//         }
+        
+        
+//         this.unloadSounds = () => {
+//             console.log("Unloading sounds")
+//             if (posSound) {
+//                 posSound.unloadAsync();
+//             }
+//             if (negSound) {
+//                 negSound.unloadAsync();
+//             }
+//             if (doneSound) {
+//                 doneSound.unloadAsync();
+//             }
+            
+//         };
 
-        this.resetCounts = () => {
-            this.setCountNegative(0);
-            this.setCountPositive(0);
-        }
-
-        this.onClickNegative = () => {
-            playNegSound();
-            this.setCountNegative(this.countNegative+1);
-        }
+//         this.playPosSound = playPosSound;
+//         this.playDoneSound = playDoneSound;
+//         this.playNegSound = playNegSound;
     
-        this.onClickPositive = () => {
-            playPosSound();
-            this.setCountPositive(this.countPositive+1);
-        }
-        
-        this.totalCounted = () => this.countPositive + this.countNegative;
-
-        this.score = Math.round((this.countPositive/this.totalCounted())*1000)/10;
-
-        this.doneSound = playDoneSound;
-
-        this.isDisplayAlert = () => {
-            if (this.countNegative+this.countPositive >= threshold) {
-                return true; 
-            }
-            return false;
-        };
-
-        this.unloadSounds = () => {
-            console.log("Unloading sounds")
-            if (posSound) {
-                posSound.unloadAsync();
-            }
-            if (negSound) {
-                negSound.unloadAsync();
-            }
-            if (doneSound) {
-                doneSound.unloadAsync();
-            }
-        };
-    
-    }
-
-    getCountNegative() {
-        return this.countNegative;
-    }
-
-    getCountPositive() {
-        return this.countPositive;
-    }
-
-    getOnClickNegative() {
-        return this.onClickNegative;
-    }
-
-    getOnClickPositive() {
-        return this.onClickPositive;
-    }
-
-    getDoneSound() {
-        return this.doneSound;
-    }
-
-    getTotalCounted() {
-        return this.totalCounted;
-    }
-
-    getIsDisplayAlert() {
-        return this.isDisplayAlert();
-    }
-
-    getUnloadSounds() {
-        return this.unloadSounds;
-    }
-
-    getScore() {
-        return this.score;
-    }
-}
+//     }
+// }

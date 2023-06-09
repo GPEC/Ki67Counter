@@ -1,49 +1,148 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
-
-//import { Audio } from 'expo-av';
-import { CounterSounds } from '../../app/counterSounds';
+import { View, Text, StyleSheet, Button, Platform } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { Overlay } from 'react-native-elements';
+import { Audio } from 'expo-av';
 
 export default function Hotspot({navigation}) {
 
-    const threshold = 5;
+    const threshold = 50;
 
-    let counterSoundsObj = new CounterSounds(threshold);
+    const [countNegative, setCountNegative] = useState(0);
+    const [countPositive, setCountPositive] = useState(0);
+    const [isAlertShown, setIsAlertShown] = useState(false);
 
+    const [posSound, setPosSound] = React.useState();
+    const [negSound, setNegSound] = React.useState();
+    const [doneSound, setDoneSound] = React.useState();
+
+    const totalCounted = countNegative + countPositive;
+    const score = Math.round((countPositive/totalCounted)*1000)/10;
+
+    const onClickNegative = () => {
+        playNegSound();
+        setCountNegative((prevValue) => prevValue+1);
+    }
+
+    const onClickPositive = () => {
+        playPosSound(); 
+        setCountPositive((prevValue) => prevValue+1);
+    }
+
+    const resetCounts = () => {
+        setCountNegative(0);
+        setCountPositive(0);
+    }
+
+    // Navigation to the next page
     const showResult = () => {
         navigation.navigate('HotspotResults', {
-            positive: counterSoundsObj.getCountPositive(), 
-            negative: counterSoundsObj.getCountNegative(), 
-            finalScore: counterSoundsObj.score, 
-            resetScores: counterSoundsObj.resetCounts
+            positive: countPositive, 
+            negative: countNegative, 
+            finalScore: score
         });
     }
 
-    const showAlert = () => {
-        counterSoundsObj.doneSound();
-        Alert.alert(
-            `Hot-spot score: ${counterSoundsObj.score}%`,  
-            `Negative nuclei counted: ${counterSoundsObj.getCountNegative()} \n` +
-            `Positive nuclei counted: ${counterSoundsObj.getCountPositive()} \n` +
-            `Total nuclei counted: ${counterSoundsObj.totalCounted()}`,
-            [{
-                text: 'OK'
-            }]
-        );
-    } 
-
-    useEffect(() => {
-        if (counterSoundsObj.getCountNegative() + counterSoundsObj.getCountPositive() >= threshold) {
-            showAlert();
+    // function to play positive sound or show error
+    // the sound needs to be unloaded everytime or it runs out of memory
+    async function playPosSound() {
+        try {
+            const { sound } = await Audio.Sound.createAsync( require('../../assets/Click01.wav') );
+            setPosSound(sound);
+            sound.setOnPlaybackStatusUpdate((status) => {
+                if (status.didJustFinish) {
+                  sound.unloadAsync(); // Unload the sound when it finishes playing
+                }
+            });
+            
+            console.log('Playing Pos Sound');
+            await sound.playAsync();
+        } catch(error) {
+            console.log('Error playing positive sound:', error);
         }
-    }, [counterSoundsObj.countPositive, counterSoundsObj.countNegative]);
+    }
 
-    // Clean up resources when the component unmounts
-    useEffect(() => {
+    // function to play negative sound or show error
+    // the sound needs to be unloaded everytime or it runs out of memory
+    async function playNegSound() {
+        try {
+            const { sound } = await Audio.Sound.createAsync( require('../../assets/beep_09.wav') );
+            setNegSound(sound);
+            sound.setOnPlaybackStatusUpdate((status) => {
+                if (status.didJustFinish) {
+                  sound.unloadAsync(); // Unload the sound when it finishes playing
+                }
+            });
+            
+            console.log('Playing Neg Sound');
+            await sound.playAsync();
+        } catch(error) {
+            console.log('Error playing negative sound:', error);
+        }
+    }
+
+    // function to play done sound or show error
+    // the sound needs to be unloaded everytime or it runs out of memory
+    async function playDoneSound() {
+        try {
+            const { sound } = await Audio.Sound.createAsync( require('../../assets/DingLing.wav') );
+            setDoneSound(sound);
+            sound.setOnPlaybackStatusUpdate((status) => {
+                if (status.didJustFinish) {
+                  sound.unloadAsync(); // Unload the sound when it finishes playing
+                }
+            });
+
+            console.log('Playing Done Sound');
+            await sound.playAsync();
+        } catch (error) {
+          console.log('Error playing done sound:', error);
+        }
+    }
+
+    // listener for countPositive and countNegative that displays alert when the sum reaches the threshold
+    useFocusEffect(
+        React.useCallback(() => {
+          if (totalCounted >= threshold) {
+            playDoneSound();
+            setIsAlertShown(true);
+          }
+        }, [countNegative, countPositive])
+    );
+
+    // Listener with empty arguments, listens with every change
+    // For web, it reads the Keyboard input A or D for negative and positive, repectively
+    useFocusEffect(
+        React.useCallback(() => {
+
+        let handleKeyDown;
+        if (Platform.OS === 'web') {
+            handleKeyDown = (event) => {
+                if (event.code === 'KeyA') {
+                    onClickNegative();
+                } else if (event.code === 'KeyD') {
+                    onClickPositive();
+                }
+            };
+            document.addEventListener('keydown', handleKeyDown);
+        }
+
+        // Clean up resources when the component unmounts
         return () => {
-            return counterSoundsObj.unloadSounds();
+            if (posSound) {
+                posSound.unloadAsync();
+            }
+            if (negSound) {
+                negSound.unloadAsync();
+            }
+            if (doneSound) {
+                doneSound.unloadAsync();
+            }
+            if (Platform.OS === 'web') {
+                document.removeEventListener('keydown', handleKeyDown);
+            }
         };
-    }, []);
+    }, []));
 
     return (
         <View style={styles.container}>
@@ -52,23 +151,33 @@ export default function Hotspot({navigation}) {
             <View style={styles.counterContainer}>
                 <View style={styles.rowStyle}>
                     <View style={styles.colStyle}>
-                        <Text style={styles.counterText}>{counterSoundsObj.getCountNegative()}</Text>
-                        <Button title='Negative' onPress={counterSoundsObj.onClickNegative} />
+                        <Text style={styles.counterText}>{countNegative}</Text>
+                        <Button title='Negative' onPress={onClickNegative} />
                     </View>
                     <View style={styles.colStyle}>
-                        <Text style={styles.counterText}>{counterSoundsObj.getCountPositive()}</Text>
-                        <Button title='Positive' onPress={counterSoundsObj.onClickPositive} />
+                        <Text style={styles.counterText}>{countPositive}</Text>
+                        <Button title='Positive' onPress={onClickPositive} />
                     </View>
                 </View>
             </View>
 
             <View style={styles.resetButtonContainer}>
-                <Button style={styles.resetButton} color='red' title='Reset' onPress={counterSoundsObj.resetCounts} />
+                <Button style={styles.resetButton} color='red' title='Reset' onPress={resetCounts} />
             </View>
 
             <View style={styles.showResultButtonContainer}>
                 <Button style={styles.showResultButton} color='purple' title='Show Results' onPress={showResult} />
             </View>
+
+            <Overlay isVisible={isAlertShown}>
+                <Text style={styles.alertTitle}>Hot-spot score: {score}%</Text>
+                <Text style={styles.alertText}>Negative nuclei counted: {countNegative}</Text>
+                <Text style={styles.alertText}>Positive nuclei counted: {countPositive}</Text>
+                <Text style={styles.alertText}>Total nuclei counted: {totalCounted}</Text>
+                <View style={styles.alertButton}>
+                    <Button title="OK" onPress={() => setIsAlertShown(false)} />
+                </View>
+            </Overlay>
         </View>
     )
 }
@@ -111,4 +220,16 @@ const styles = StyleSheet.create({
         left:0,
         right:0,
     },
+    alertText: {
+        marginLeft: 15,
+        marginRight: 15
+    },
+    alertTitle: {
+        fontWeight:'bold', 
+        fontSize:15,
+        margin: 15
+    },
+    alertButton: {
+        margin: 15
+    }
 })

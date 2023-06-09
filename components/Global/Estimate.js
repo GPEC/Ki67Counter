@@ -41,10 +41,6 @@ export default function Global({ navigation }) {
         }
         
         navigation.navigate('Fields', {
-            // numNeg: sfa.getNumNegligible(),
-            // numLow: sfa.getNumLow(),
-            // numMed: sfa.getNumMedium(),
-            // numHigh: sfa.getNumHigh()
             sfa,
             ki67Score
         });
@@ -146,7 +142,7 @@ export default function Global({ navigation }) {
             <View style={styles.sliderRow}>
                 <Text style={styles.leftText}>Neg:</Text> 
                 <Slider
-                    style={styles.sliderNeg}
+                    style={styles.slider}
                     minimumValue={0}
                     maximumValue={100}
                     value={sliderNegValue}
@@ -160,7 +156,7 @@ export default function Global({ navigation }) {
             <View style={styles.sliderRow}>
                 <Text style={styles.leftText}>Low:</Text>
                 <Slider
-                    style={styles.sliderLow}
+                    style={styles.slider}
                     minimumValue={0}
                     maximumValue={100}
                     value={sliderLowValue}
@@ -174,7 +170,7 @@ export default function Global({ navigation }) {
             <View style={styles.sliderRow}>
                 <Text style={styles.leftText}>Med:</Text>
                 <Slider
-                    style={styles.sliderMed}
+                    style={styles.slider}
                     minimumValue={0}
                     maximumValue={100}
                     value={sliderMedValue}
@@ -188,7 +184,7 @@ export default function Global({ navigation }) {
             <View style={styles.sliderRow}>
                 <Text style={styles.leftText}>High:</Text>
                 <Slider
-                    style={styles.sliderHigh}
+                    style={styles.slider}
                     minimumValue={0}
                     maximumValue={100}
                     value={sliderHighValue}
@@ -219,33 +215,14 @@ const styles = StyleSheet.create({
         bottom:0,
         left: 0,
     },
-    nextButton: {
-
-    },
     sliderRow: {
         flexDirection: 'row',
         marginTop: 20,
         marginLeft: 20
     },
-    sliderNeg: {
-        width: '65%',
-        color: 'black',
-    },
-    sliderLow: {
-        width: '65%',
-        alignSelf: 'flex-end',
-        color: 'green',
-    },
-    sliderMed: {
-        width: '65%',
-        alignSelf: 'flex-end',
-        thumbTintColor: 'yellow',
-        minimumTrackTintColor: 'yellow'
-    },
-    sliderHigh: {
-        width: '65%',
-        alignSelf: 'flex-end',
-        thumbTintColor: 'red',
+    slider: {
+        width: '60%',
+        color: 'black'
     },
     horizontalLine: {
         borderBottomColor: 'grey',
@@ -253,9 +230,12 @@ const styles = StyleSheet.create({
         margin: 30,
     },
     leftText: {
-        marginLeft: 25
+        marginLeft: 25,
+        marginRight: 20,
+        fontWeight: 'bold'
     },
     textRight:{
-        marginLeft: 10
+        marginLeft: 20,
+        marginRight: 25
     }
 })
