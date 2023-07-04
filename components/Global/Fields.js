@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, StyleSheet, Button, Platform } from 'react-native';
+import { View, Text, StyleSheet, Button, Platform, TextInput } from 'react-native';
 import { Overlay } from 'react-native-elements';
 import { Audio } from 'expo-av';
 
-export default function Field ( {navigation, fieldType, nextScreen, ki67Score, index} ) {
+export default function Field ( {navigation, fieldType, nextScreen, ki67Score, index, id} ) {
 
     // function to display text for the next page button
     const nextButtonText = () => {
@@ -19,9 +19,11 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
     const [countNegative, setCountNegative] = useState(ki67Score.getFieldByIndex(index).negCount);
     const [countPositive, setCountPositive] = useState(ki67Score.getFieldByIndex(index).posCount);
     
-    const [posSound, setPosSound] = React.useState();
-    const [negSound, setNegSound] = React.useState();
-    const [doneSound, setDoneSound] = React.useState();
+    const [posSound, setPosSound] = useState();
+    const [negSound, setNegSound] = useState();
+    const [doneSound, setDoneSound] = useState();
+    const [comments, setComments] = useState(ki67Score.getComments());
+    const [isWeb, setIsWeb] = useState(false);
 
     const threshold = 100;
 
@@ -44,17 +46,21 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
         setCountPositive(0);
     }
 
+    // Function to update comments
+    const onChangeComments = (val) => setComments(val);
+
     // function to handle navigation to the next screen
     const goToNextScreen = () => {
 
         // Saving the values whenever we go to the next screen
         ki67Score.setNegCount(index, countNegative);
         ki67Score.setPosCount(index, countPositive);
-
+        ki67Score.setComments(comments);
+        
         setIsInitialRender(true);
 
         if (nextScreen==='Report')
-            navigation.navigate(nextScreen, {ki67Score});
+            navigation.navigate(nextScreen, {ki67Score, id});
         else
             navigation.navigate(nextScreen);
     }
@@ -125,6 +131,7 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
         
         let handleKeyPress;
         if (Platform.OS === 'web') {
+            setIsWeb(true)
             handleKeyPress = (event) => {
                 if (event.code === 'KeyA') {
                     onClickNegative();
@@ -148,7 +155,7 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
             if (doneSound) {
                 doneSound.unloadAsync();
             }
-            if (Platform.OS === 'web') {
+            if (isWeb) {
                 document.removeEventListener('keydown', handleKeyPress);
             }
         };
@@ -172,6 +179,19 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
                     </View>
                 </View>
             </View>
+
+            {isWeb ? null : 
+            <View style={styles.commentsContainer}>
+                <Text style={[styles.mainText, {marginTop: 40}]}>Add comments: </Text>
+                <TextInput
+                    onChangeText={onChangeComments}
+                    value={comments}
+                    style={styles.commentsField}
+                    editable
+                    multiline
+                    numberOfLines={4}
+                />
+            </View>}
 
             <View style={styles.resetButtonContainer}>
                 <Button style={styles.resetButton} color='red' title='Reset' onPress={resetCounts} />
@@ -242,5 +262,14 @@ const styles = StyleSheet.create({
     },
     alertButton: {
         margin: 15
+    },
+    commentsField: {
+        borderWidth: 2,
+        width: 250,
+        paddingLeft:4,
+        paddingRight:4
+    },
+    commentsContainer: {
+        alignItems: 'center'
     }
 })

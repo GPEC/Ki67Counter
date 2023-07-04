@@ -5,6 +5,7 @@ import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-naviga
 import Home from './components/Home';
 import HotspotStack from './components/Hotspot/HotspotStack';
 import Global from './components/Global/GlobalStack';
+import Logs from './components/Logs';
 
 const DrawerNav = createDrawerNavigator();
 
@@ -53,6 +54,10 @@ export default function App() {
           headerTitle: getGlobalHeaderTitle(route),
           headerShown: getGlobalHeaderShown(route)
         })}/>
+        <DrawerNav.Screen name="Logs" component={Logs} 
+          options={{
+            unmountOnBlur: true
+          }}/>
       </DrawerNav.Navigator>
     </NavigationContainer>
   );

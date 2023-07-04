@@ -7,7 +7,7 @@ const Stack = createStackNavigator();
 
 export default function FieldsStack({route}) {
 
-    let {sfa, ki67Score} = route.params;
+    let {sfa, ki67Score, id} = route.params;
 
     let numNeg = sfa.getNumNegligible();
     let numLow = sfa.getNumLow();
@@ -42,9 +42,8 @@ export default function FieldsStack({route}) {
                 const nextScreen = index === totalScreens - 1 ? 'Report' : screenNames[index + 1]; // Determine the next screen name
 
                 const fieldType = getFieldName();
-                
                 const color = getColor(fieldType);
-
+                
                 const FieldComponent = ({ navigation }) => (
                     <Field
                         navigation={navigation}
@@ -52,6 +51,7 @@ export default function FieldsStack({route}) {
                         nextScreen={nextScreen}
                         ki67Score={ki67Score}
                         index={index}
+                        id={id}
                     />
                 );
 

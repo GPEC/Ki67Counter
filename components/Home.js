@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
       height: '100%'
     },
     link: {
-      color: 'blue',
-      textDecorationLine: 'underline'
+      color: 'blue'
     }
 });

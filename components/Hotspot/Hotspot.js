@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Button, Platform, TextInput, KeyboardAvoidingView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Overlay } from 'react-native-elements';
 import { Audio } from 'expo-av';
 
 export default function Hotspot({navigation}) {
 
-    const threshold = 50;
+    const threshold = 500;
 
     const [countNegative, setCountNegative] = useState(0);
     const [countPositive, setCountPositive] = useState(0);
     const [isAlertShown, setIsAlertShown] = useState(false);
 
-    const [posSound, setPosSound] = React.useState();
-    const [negSound, setNegSound] = React.useState();
-    const [doneSound, setDoneSound] = React.useState();
+    const [posSound, setPosSound] = useState();
+    const [negSound, setNegSound] = useState();
+    const [doneSound, setDoneSound] = useState();
+    const [specimenId, setSpecimenId] = useState("");
+    const [comments, setComments] = useState("");
+
+    const [isWeb, setIsWeb] = useState(false);
 
     const totalCounted = countNegative + countPositive;
     const score = Math.round((countPositive/totalCounted)*1000)/10;
@@ -39,11 +43,23 @@ export default function Hotspot({navigation}) {
         navigation.navigate('HotspotResults', {
             positive: countPositive, 
             negative: countNegative, 
-            finalScore: score
+            finalScore: score,
+            id: specimenId,
+            comments: comments
         });
     }
 
-    // function to play positive sound or show error
+    // Function to handle change in ID
+    const onChangeId = (val) => {
+        setSpecimenId(val);
+    }
+
+    // Function to handle change in comments
+    const onChangeComments = (val) => {
+        setComments(val);
+    }
+ 
+    // Function to play positive sound or show error
     // the sound needs to be unloaded everytime or it runs out of memory
     async function playPosSound() {
         try {
@@ -117,6 +133,7 @@ export default function Hotspot({navigation}) {
 
         let handleKeyDown;
         if (Platform.OS === 'web') {
+            setIsWeb(true);
             handleKeyDown = (event) => {
                 if (event.code === 'KeyA') {
                     onClickNegative();
@@ -138,7 +155,7 @@ export default function Hotspot({navigation}) {
             if (doneSound) {
                 doneSound.unloadAsync();
             }
-            if (Platform.OS === 'web') {
+            if (isWeb) {
                 document.removeEventListener('keydown', handleKeyDown);
             }
         };
@@ -160,7 +177,30 @@ export default function Hotspot({navigation}) {
                     </View>
                 </View>
             </View>
+            
+            {isWeb ? null : 
+                <View style={styles.counterContainer}>
+                    <Text style={[styles.mainText]}>Add Specimen ID: </Text>
+                
+                    <TextInput
+                        onChangeText={onChangeId}
+                        value={specimenId}
+                        style={styles.idField}
+                        maxLength={40}/>
 
+                    <Text style={[styles.mainText, { marginTop: 20 }]}>Add comments: </Text>
+                    
+                    <TextInput
+                        onChangeText={onChangeComments}
+                        value={comments}
+                        style={styles.commentsField}
+                        editable
+                        multiline
+                        numberOfLines={4}/>
+                
+                </View>
+            }
+            
             <View style={styles.resetButtonContainer}>
                 <Button style={styles.resetButton} color='red' title='Reset' onPress={resetCounts} />
             </View>
@@ -212,7 +252,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 120,
+        marginTop: 20
     },
     showResultButtonContainer: {
         position: 'absolute',
@@ -231,5 +271,17 @@ const styles = StyleSheet.create({
     },
     alertButton: {
         margin: 15
+    },
+    idField: {
+        borderWidth: 2,
+        width: 250,
+        paddingLeft:4,
+        paddingRight:4
+    },
+    commentsField: {
+        borderWidth: 2,
+        width: 250,
+        paddingLeft:4,
+        paddingRight:4
     }
 })

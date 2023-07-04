@@ -1,15 +1,36 @@
-import { Text, View, Button, StyleSheet } from 'react-native';
+import { Text, View, Button, StyleSheet, Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import AsyncStore from '../../data/AsyncStore';
 
 export default function HotspotResults({navigation, route}) {
 
-    const { positive, negative, finalScore } = route.params;
+    const { positive, negative, finalScore, id, comments } = route.params;
 
-    // function that converts NaN value to string to resolve an error
+    // Function that converts NaN value to string to resolve console error
     const getScore = () => {
         if(!finalScore)
             return finalScore.toString();
         return finalScore;
     }
+
+    const getCurrentTimestamp = () => new Date().getTime();
+
+    useEffect(()=> {
+        
+        if (Platform.OS !== 'web') {
+            const timestamp = getCurrentTimestamp();
+
+            AsyncStore.saveData(timestamp, {
+                countPositive: positive,
+                countNegative: negative,
+                score: finalScore,
+                id: id,
+                comments: comments,
+                method: 'Hot-spot'
+            });
+        }
+
+    }, [])
 
     return (
         <View style={styles.resultContainer}>

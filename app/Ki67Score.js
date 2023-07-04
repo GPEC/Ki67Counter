@@ -1,5 +1,4 @@
-
-class Ki67ScoreField {
+export class Ki67ScoreField {
     constructor(negCount, posCount, fieldType) {
       this.negCount = negCount;
       this.posCount = posCount;
@@ -18,6 +17,59 @@ class Ki67ScoreField {
       return Math.round((this.posCount / (this.negCount + this.posCount)) * 1000) / 10;
     }
 }
+
+export class Ki67ResultField {
+  constructor(type, percentage, fields) {
+    this.typeName = this.getHumanName(type);
+    this.percentage = percentage;
+    this.fields = fields;
+    this.color = this.getColor(type);
+  }
+
+  getHumanName(fieldType) {
+    switch (fieldType) {
+      case Ki67Score.FIELD_TYPE_HIGH:
+        return "High";
+      case Ki67Score.FIELD_TYPE_MED:
+        return "Medium";
+      case Ki67Score.FIELD_TYPE_LOW:
+        return "Low";
+      case Ki67Score.FIELD_TYPE_NEG:
+        return "Negligible";
+    }
+  }
+
+  getColor(fieldType) {
+    switch (fieldType) {
+      case Ki67Score.FIELD_TYPE_HIGH:
+        return 'red';
+      case Ki67Score.FIELD_TYPE_MED:
+        return 'orange';
+      case Ki67Score.FIELD_TYPE_LOW:
+        return 'green';
+      case Ki67Score.FIELD_TYPE_NEG:
+        return 'black';
+    }
+  }
+}
+
+export class Ki67ScoresByType {
+
+  constructor(ki67Score) {
+    this.ki67Score = ki67Score;
+  }
+
+  getAllReportFields() {
+    
+    let negField = new Ki67ResultField(Ki67Score.FIELD_TYPE_NEG, this.ki67Score.pNeg, this.ki67Score.getFieldsNeg());
+    let lowField = new Ki67ResultField(Ki67Score.FIELD_TYPE_LOW, this.ki67Score.pLow, this.ki67Score.getFieldsLow());
+    let medField = new Ki67ResultField(Ki67Score.FIELD_TYPE_MED, this.ki67Score.pMed, this.ki67Score.getFieldsMed());
+    let highField = new Ki67ResultField(Ki67Score.FIELD_TYPE_HIGH, this.ki67Score.pHigh, this.ki67Score.getFieldsHigh());
+
+    return [negField, lowField, medField, highField];
+  }
+  
+}
   
 export class Ki67Score {
     static FIELD_TYPE_HIGH = "High";
@@ -31,19 +83,7 @@ export class Ki67Score {
       this.pMed = pMed;
       this.pHigh = pHigh;
       this.ki67ScoreFields = [];
-    }
-
-    getHumanName(fieldType) {
-      switch (fieldType) {
-        case Ki67Score.FIELD_TYPE_HIGH:
-          return "High";
-        case Ki67Score.FIELD_TYPE_MED:
-          return "Medium";
-        case Ki67Score.FIELD_TYPE_LOW:
-          return "Low";
-        case Ki67Score.FIELD_TYPE_NEG:
-          return "Negligible";
-      }
+      this.comments = "";
     }
   
     getColor(fieldType) {
@@ -57,6 +97,14 @@ export class Ki67Score {
         case Ki67Score.FIELD_TYPE_NEG:
           return 'black';
       }
+    }
+
+    getComments() {
+      return this.comments;
+    }
+
+    setComments(comments) {
+      this.comments = comments;
     }
   
     addField(negCount, posCount, fieldType) {

@@ -1,36 +1,30 @@
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { Ki67Score } from '../../app/Ki67Score';
+import { View, Text, Button, StyleSheet, Platform } from 'react-native';
+import { Ki67ScoresByType } from '../../app/Ki67Score';
+import React, { useEffect } from 'react';
+import AsyncStore from '../../data/AsyncStore';
 
 export default function Report({navigation, route}) {
 
-    let {ki67Score} = route.params;
+    let {ki67Score, id} = route.params;
 
-    let fieldNeg = {
-        typeName: Ki67Score.FIELD_TYPE_NEG,
-        color: ki67Score.getColor(Ki67Score.FIELD_TYPE_NEG),
-        percentage: ki67Score.pNeg,
-        fields: ki67Score.getFieldsNeg()
-    };
-    let fieldLow = {
-        typeName: Ki67Score.FIELD_TYPE_LOW,
-        color: ki67Score.getColor(Ki67Score.FIELD_TYPE_LOW),
-        percentage: ki67Score.pLow,
-        fields: ki67Score.getFieldsLow()
-    };
-    let fieldMed = {
-        typeName: Ki67Score.FIELD_TYPE_MED,
-        color: ki67Score.getColor(Ki67Score.FIELD_TYPE_MED),
-        percentage: ki67Score.pMed,
-        fields: ki67Score.getFieldsMed()
-    };
-    let fieldHigh = {
-        typeName: Ki67Score.FIELD_TYPE_HIGH,
-        color: ki67Score.getColor(Ki67Score.FIELD_TYPE_HIGH),
-        percentage: ki67Score.pHigh,
-        fields: ki67Score.getFieldsHigh()
-    };
+    let fieldsByTye = new Ki67ScoresByType(ki67Score);
 
-    let allFieldTypes = [fieldNeg, fieldLow, fieldMed, fieldHigh];
+    let allFieldTypes = fieldsByTye.getAllReportFields();
+
+    useEffect(() => {
+
+        if (Platform.OS !== 'web') {
+            const timestamp = new Date().getTime();
+
+            AsyncStore.saveData(timestamp, {
+                ki67Score: ki67Score,
+                id: id,
+                comments: ki67Score.getComments(),
+                method: 'Global'
+            });
+        }
+        
+    }, [])
 
     return (
         <View style={styles.container}>
