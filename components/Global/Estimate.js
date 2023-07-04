@@ -1,4 +1,4 @@
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, TextInput, Platform } from 'react-native';
 import Slider from '@react-native-community/slider';
 import React, { useState, useEffect } from 'react';
 import { ScoringFieldsAllocator } from '../../app/scoringFieldsAllocator';
@@ -12,11 +12,15 @@ export default function Global({ navigation }) {
     const [sliderHighValue, setHighSliderValue] = useState(0);
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-
+    
     const [negUpperLimit, setNegUpperLimit] = useState(100);
     const [lowUpperLimit, setLowUpperLimit] = useState(100);
     const [medUpperLimit, setMedUpperLimit] = useState(100);
     const [highUpperLimit, setHighUpperLimit] = useState(100);
+
+    const [specimenId, setSpecimenId] = useState("");
+
+    const [isWeb, setIsWeb] = useState(false);
 
     let sfa = new ScoringFieldsAllocator();
 
@@ -42,112 +46,62 @@ export default function Global({ navigation }) {
 
         navigation.navigate('Fields', {
             sfa,
-            ki67Score
+            ki67Score,
+            id: specimenId
         });
     }
 
+    // Function to update id
+    const onChangeId = (val) => setSpecimenId(val);
+
     /***************    SLIDER CHANGE HANDLERS START   ************************************/
-    const makeSureAllSlidersZeroOrAbove = () => {
-        if (sliderNegValue<0) {
-            setNegSliderValue(0)
-        }
-        if (sliderLowValue<0) {
-            setLowSliderValue(0)
-        }
-        if (sliderMedValue<0) {
-            setMedSliderValue(0)
-        }
-        if (sliderHighValue<0) {
-            setHighSliderValue(0)
-        }
-    }
     const handleNegSliderChange = (value) => {
         value = Math.round(value);
 
-        if (value + sliderMedValue + sliderLowValue + sliderHighValue > 100) {
-            const acceptableValue = 100 - (sliderMedValue + sliderLowValue + sliderHighValue);
+        if(value+sliderMedValue+sliderLowValue+sliderHighValue>100) {
+            const acceptableValue = 100-(sliderMedValue+sliderLowValue+sliderHighValue);
             setNegUpperLimit(acceptableValue);
-
-            setNegSliderValue(acceptableValue+0.1);
-            setNegSliderValue(acceptableValue-0.1);
-
-            setMedSliderValue(sliderMedValue + 0.1);
-            setLowSliderValue(sliderLowValue + 0.1);
-            setHighSliderValue(sliderHighValue + 0.1);
-            setMedSliderValue(sliderMedValue - 0.1);
-            setLowSliderValue(sliderLowValue - 0.1);
-            setHighSliderValue(sliderHighValue - 0.1);
+            setNegSliderValue(acceptableValue);
         } else {
             setNegUpperLimit(100);
             setNegSliderValue(value);
         }
-        makeSureAllSlidersZeroOrAbove();
     };
     const handleLowSliderChange = (value) => {
         value = Math.round(value);
 
-        if (value + sliderMedValue + sliderNegValue + sliderHighValue > 100) {
-            const acceptableValue = 100 - (sliderMedValue + sliderNegValue + sliderHighValue);
+        if(value+sliderMedValue+sliderNegValue+sliderHighValue>100) {
+            const acceptableValue = 100-(sliderMedValue+sliderNegValue+sliderHighValue);
+            setLowSliderValue(acceptableValue);
             setLowUpperLimit(acceptableValue);
-
-            setLowSliderValue(acceptableValue + 0.1);
-            setLowSliderValue(acceptableValue - 0.1);
-
-            setMedSliderValue(sliderMedValue + 0.1);
-            setHighSliderValue(sliderHighValue + 0.1);
-            setNegSliderValue(sliderNegValue + 0.1);
-            setMedSliderValue(sliderMedValue - 0.1);
-            setHighSliderValue(sliderHighValue - 0.1);
-            setNegSliderValue(sliderNegValue - 0.1);
         } else {
             setLowSliderValue(value);
             setLowUpperLimit(100);
         }
-        makeSureAllSlidersZeroOrAbove();
     };
     const handleMedSliderChange = (value) => {
         value = Math.round(value);
 
-        if (value + sliderNegValue + sliderLowValue + sliderHighValue > 100) {
-            const acceptableValue = 100 - (sliderNegValue + sliderLowValue + sliderHighValue)
+        if(value+sliderNegValue+sliderLowValue+sliderHighValue>100) {
+            const acceptableValue =  100-(sliderNegValue+sliderLowValue+sliderHighValue)
+            setMedSliderValue(acceptableValue);
             setMedUpperLimit(acceptableValue);
-
-            setMedSliderValue(acceptableValue + 0.1);
-            setMedSliderValue(acceptableValue - 0.1);
-
-            setHighSliderValue(sliderHighValue + 0.1);
-            setLowSliderValue(sliderLowValue + 0.1);
-            setNegSliderValue(sliderNegValue + 0.1);
-            setHighSliderValue(sliderHighValue - 0.1);
-            setLowSliderValue(sliderLowValue - 0.1);
-            setNegSliderValue(sliderNegValue - 0.1);
         } else {
             setMedSliderValue(value);
             setMedUpperLimit(100)
         }
-        makeSureAllSlidersZeroOrAbove();
     };
     const handleHighSliderChange = (value) => {
         value = Math.round(value);
-
-        if (value + sliderMedValue + sliderLowValue + sliderNegValue > 100) {
-            const acceptableValue = 100 - (sliderMedValue + sliderLowValue + sliderNegValue);
+        
+        if(value+sliderMedValue+sliderLowValue+sliderNegValue>100) {
+            const acceptableValue = 100-(sliderMedValue+sliderLowValue+sliderNegValue);
+            setHighSliderValue(acceptableValue);
             setHighUpperLimit(acceptableValue);
-
-            setHighSliderValue(acceptableValue + 0.1);
-            setHighSliderValue(acceptableValue - 0.1);
-
-            setMedSliderValue(sliderMedValue + 0.1);
-            setLowSliderValue(sliderLowValue + 0.1);
-            setNegSliderValue(sliderNegValue + 0.1);
-            setMedSliderValue(sliderMedValue - 0.1);
-            setLowSliderValue(sliderLowValue - 0.1);
-            setNegSliderValue(sliderNegValue - 0.1);
         } else {
             setHighSliderValue(value);
             setHighUpperLimit(100);
         }
-        makeSureAllSlidersZeroOrAbove();
     };
     /*********************    SLIDER CHANGE HANDLERS END   ****************************/
 
@@ -188,10 +142,26 @@ export default function Global({ navigation }) {
         return defaultText;
     }
 
+    useEffect(() => {
+        if (Platform.OS === 'web') {
+            setIsWeb(true);
+        }
+    }, [])
+
     return (
         <View style={styles.container}>
 
             <Text style={styles.mainText}>{generateText()}</Text>
+
+            {isWeb ? null : 
+            <View style={styles.idContainer}>
+                <Text style={[styles.mainText, {marginTop: 10}]}>Add Specimen ID: </Text>
+                <TextInput
+                    onChangeText={onChangeId}
+                    value={specimenId}
+                    style={styles.idField}
+                    maxLength={40}/>
+            </View>}
 
             <View style={styles.sliderRow}>
                 <Text style={styles.leftText}>Neg:</Text>
@@ -247,6 +217,7 @@ export default function Global({ navigation }) {
                 />
                 <Text style={styles.textRight}>{sliderHighValue}%</Text>
             </View>
+
             <View style={styles.next}>
                 <Button style={styles.nextButton} color='black' title='Next' onPress={goToFields} disabled={isButtonDisabled} />
             </View>
@@ -291,5 +262,18 @@ const styles = StyleSheet.create({
     textRight: {
         marginLeft: 20,
         marginRight: 25
+    },
+    rowStyle: {
+        flexDirection: 'row',
+    },
+    idField: {
+        borderWidth: 2,
+        width: 250,
+        paddingLeft:4,
+        paddingRight:4
+    },
+    idContainer: {
+        alignItems: 'center',
+        marginBottom: 20
     }
 })
