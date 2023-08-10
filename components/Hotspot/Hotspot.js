@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, Platform, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, Platform, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { Overlay } from 'react-native-elements';
+import { Overlay, Button } from 'react-native-elements';
 import { Audio } from 'expo-av';
 
 export default function Hotspot({navigation}) {
@@ -162,6 +162,7 @@ export default function Hotspot({navigation}) {
     }, []));
 
     return (
+        <TouchableWithoutFeedback onPress={ () => { Keyboard.dismiss() } }>
         <View style={styles.container}>
             <Text style={styles.mainText}>Please select 1 high-powered field with the highest Ki67 positivity and count up to 500 nuclei.</Text>
             
@@ -202,11 +203,11 @@ export default function Hotspot({navigation}) {
             }
             
             <View style={styles.resetButtonContainer}>
-                <Button style={styles.resetButton} color='red' title='Reset' onPress={resetCounts} />
+                <Button buttonStyle={{backgroundColor: 'red'}} title='Reset' onPress={resetCounts} />
             </View>
 
             <View style={styles.showResultButtonContainer}>
-                <Button style={styles.showResultButton} color='purple' title='Show Results' onPress={showResult} />
+                <Button buttonStyle={{backgroundColor: 'purple'}} title='Show Results' onPress={showResult} />
             </View>
 
             <Overlay isVisible={isAlertShown}>
@@ -219,6 +220,7 @@ export default function Hotspot({navigation}) {
                 </View>
             </Overlay>
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, StyleSheet, Button, Platform, TextInput } from 'react-native';
-import { Overlay } from 'react-native-elements';
+import { View, Text, StyleSheet, Platform, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Overlay, Button } from 'react-native-elements';
 import { Audio } from 'expo-av';
 
 export default function Field ( {navigation, fieldType, nextScreen, ki67Score, index, id} ) {
@@ -162,6 +162,7 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
       }, []);
 
     return(
+        <TouchableWithoutFeedback onPress={ () => { Keyboard.dismiss() } }>
         <View style={styles.container}>
             <Text style={styles.mainText}>
                 Please select 1 high-powered field with the Ki67 <Text style={{fontWeight: 'bold'}}>{fieldType}</Text> positivity and count up to 100 nuclei.
@@ -194,11 +195,14 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
             </View>}
 
             <View style={styles.resetButtonContainer}>
-                <Button style={styles.resetButton} color='red' title='Reset' onPress={resetCounts} />
+                <Button
+                    buttonStyle={{backgroundColor: 'red'}}
+                    title='Reset' 
+                    onPress={resetCounts} />
             </View>
 
             <View style={styles.showResultButtonContainer}>
-                <Button color='purple' title={nextButtonText()} onPress={goToNextScreen} />
+                <Button buttonStyle={{backgroundColor: 'purple'}} title={nextButtonText()} onPress={goToNextScreen} />
             </View>
 
             <Overlay isVisible={isAlertShown}>
@@ -210,6 +214,7 @@ export default function Field ( {navigation, fieldType, nextScreen, ki67Score, i
             </Overlay>
 
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 

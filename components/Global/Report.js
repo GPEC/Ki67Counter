@@ -1,7 +1,8 @@
-import { View, Text, Button, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Ki67ScoresByType } from '../../app/Ki67Score';
 import React, { useEffect } from 'react';
 import AsyncStore from '../../data/AsyncStore';
+import  {Button} from "react-native-elements";
 
 export default function Report({navigation, route}) {
 
@@ -65,7 +66,7 @@ export default function Report({navigation, route}) {
             <View style={styles.buttonContainer}>
                 <Button
                     title='Score another slide'
-                    color='black'
+                    buttonStyle={{backgroundColor: 'black'}}
                     onPress={()=> navigation.reset({
                         index: 0,
                         routes: [{ name: 'Estimate' }],

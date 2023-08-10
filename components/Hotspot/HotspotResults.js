@@ -1,5 +1,6 @@
-import { Text, View, Button, StyleSheet, Platform } from 'react-native';
+import { Text, View, StyleSheet, Platform } from 'react-native';
 import React, { useEffect } from 'react';
+import {Button} from 'react-native-elements';
 import AsyncStore from '../../data/AsyncStore';
 
 export default function HotspotResults({navigation, route}) {

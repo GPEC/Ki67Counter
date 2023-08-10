@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, Dimensions, Image, Button, Linking } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, Linking } from 'react-native';
+import { Button } from "react-native-elements";
 
 export default function Home({navigation}) {
 
@@ -28,7 +29,7 @@ export default function Home({navigation}) {
             This app will guide you through the <Text style={styles.link} onPress={handleLinkPress1}>standardized ki67 scoring method</Text> proposed by the <Text style={styles.link} onPress={handleLinkPress2}>International Ki67 Working Group</Text>.
           </Text>
           <View style={styles.buttonContainer}>
-              <Button title='select score type' onPress={onButtonClick} />
+              <Button title='Select score type' onPress={onButtonClick} />
           </View>
         </View>
     );

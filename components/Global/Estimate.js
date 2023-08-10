@@ -1,8 +1,9 @@
-import { View, Text, Button, StyleSheet, TextInput, Platform } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import Slider from '@react-native-community/slider';
 import React, { useState, useEffect } from 'react';
 import { ScoringFieldsAllocator } from '../../app/scoringFieldsAllocator';
 import { Ki67Score } from '../../app/Ki67Score';
+import { Button } from "react-native-elements";
 
 export default function Global({ navigation }) {
 
@@ -55,53 +56,125 @@ export default function Global({ navigation }) {
     const onChangeId = (val) => setSpecimenId(val);
 
     /***************    SLIDER CHANGE HANDLERS START   ************************************/
+    
+    const makeSureAllSlidersZeroOrAbove = () => {
+        if (sliderNegValue<0) {
+            setNegSliderValue(0)
+        }
+        if (sliderLowValue<0) {
+            setLowSliderValue(0)
+        }
+        if (sliderMedValue<0) {
+            setMedSliderValue(0)
+        }
+        if (sliderHighValue<0) {
+            setHighSliderValue(0)
+        }
+    }
+    
     const handleNegSliderChange = (value) => {
         value = Math.round(value);
 
         if(value+sliderMedValue+sliderLowValue+sliderHighValue>100) {
             const acceptableValue = 100-(sliderMedValue+sliderLowValue+sliderHighValue);
             setNegUpperLimit(acceptableValue);
-            setNegSliderValue(acceptableValue);
+            if(!isWeb)
+                setNegSliderValue(acceptableValue);
+            if(isWeb) {
+                setNegSliderValue(acceptableValue+0.1);
+                setNegSliderValue(acceptableValue-0.1);
+    
+                setMedSliderValue(sliderMedValue + 0.1);
+                setLowSliderValue(sliderLowValue + 0.1);
+                setHighSliderValue(sliderHighValue + 0.1);
+                setMedSliderValue(sliderMedValue - 0.1);
+                setLowSliderValue(sliderLowValue - 0.1);
+                setHighSliderValue(sliderHighValue - 0.1);
+            }
         } else {
             setNegUpperLimit(100);
             setNegSliderValue(value);
         }
+        if(isWeb)
+            makeSureAllSlidersZeroOrAbove();
     };
     const handleLowSliderChange = (value) => {
         value = Math.round(value);
 
         if(value+sliderMedValue+sliderNegValue+sliderHighValue>100) {
             const acceptableValue = 100-(sliderMedValue+sliderNegValue+sliderHighValue);
-            setLowSliderValue(acceptableValue);
             setLowUpperLimit(acceptableValue);
+            if(isWeb) {
+                setLowSliderValue(acceptableValue + 0.1);
+                setLowSliderValue(acceptableValue - 0.1);
+    
+                setMedSliderValue(sliderMedValue + 0.1);
+                setHighSliderValue(sliderHighValue + 0.1);
+                setNegSliderValue(sliderNegValue + 0.1);
+                setMedSliderValue(sliderMedValue - 0.1);
+                setHighSliderValue(sliderHighValue - 0.1);
+                setNegSliderValue(sliderNegValue - 0.1);
+            } else
+                setLowSliderValue(acceptableValue);
         } else {
             setLowSliderValue(value);
             setLowUpperLimit(100);
         }
+        if(isWeb)
+            makeSureAllSlidersZeroOrAbove();
     };
     const handleMedSliderChange = (value) => {
         value = Math.round(value);
 
         if(value+sliderNegValue+sliderLowValue+sliderHighValue>100) {
             const acceptableValue =  100-(sliderNegValue+sliderLowValue+sliderHighValue)
-            setMedSliderValue(acceptableValue);
             setMedUpperLimit(acceptableValue);
+            if(!isWeb)
+                setMedSliderValue(acceptableValue);
+            else {
+                setMedSliderValue(acceptableValue + 0.1);
+                setMedSliderValue(acceptableValue - 0.1);
+    
+                setHighSliderValue(sliderHighValue + 0.1);
+                setLowSliderValue(sliderLowValue + 0.1);
+                setNegSliderValue(sliderNegValue + 0.1);
+                setHighSliderValue(sliderHighValue - 0.1);
+                setLowSliderValue(sliderLowValue - 0.1);
+                setNegSliderValue(sliderNegValue - 0.1);
+            }
         } else {
             setMedSliderValue(value);
             setMedUpperLimit(100)
         }
+        if(isWeb)
+            makeSureAllSlidersZeroOrAbove();
     };
     const handleHighSliderChange = (value) => {
         value = Math.round(value);
         
         if(value+sliderMedValue+sliderLowValue+sliderNegValue>100) {
             const acceptableValue = 100-(sliderMedValue+sliderLowValue+sliderNegValue);
-            setHighSliderValue(acceptableValue);
             setHighUpperLimit(acceptableValue);
+            if(!isWeb)
+                setHighSliderValue(acceptableValue);
+            
+            if(isWeb) {
+                setHighSliderValue(acceptableValue + 0.1);
+                setHighSliderValue(acceptableValue - 0.1);
+
+                setMedSliderValue(sliderMedValue + 0.1);
+                setLowSliderValue(sliderLowValue + 0.1);
+                setNegSliderValue(sliderNegValue + 0.1);
+                setMedSliderValue(sliderMedValue - 0.1);
+                setLowSliderValue(sliderLowValue - 0.1);
+                setNegSliderValue(sliderNegValue - 0.1);
+            }
         } else {
             setHighSliderValue(value);
             setHighUpperLimit(100);
         }
+        if(isWeb)
+            makeSureAllSlidersZeroOrAbove();
     };
     /*********************    SLIDER CHANGE HANDLERS END   ****************************/
 
@@ -149,6 +222,7 @@ export default function Global({ navigation }) {
     }, [])
 
     return (
+        <TouchableWithoutFeedback onPress={ () => { Keyboard.dismiss() } }>
         <View style={styles.container}>
 
             <Text style={styles.mainText}>{generateText()}</Text>
@@ -222,6 +296,7 @@ export default function Global({ navigation }) {
                 <Button style={styles.nextButton} color='black' title='Next' onPress={goToFields} disabled={isButtonDisabled} />
             </View>
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 

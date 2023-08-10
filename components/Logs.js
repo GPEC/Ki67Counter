@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import AsyncStore from '../data/AsyncStore';
-import { View, Text, StyleSheet, ScrollView, Button, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, Platform } from 'react-native';
 import { Ki67ScoresByType, Ki67Score } from '../app/Ki67Score';
+import { Button } from "react-native-elements";
 
 export default function Logs() {
 
@@ -170,7 +171,7 @@ export default function Logs() {
             <View style={styles.buttonContainer}>
                 <Button 
                     title='Delete all data'
-                    color='black'
+                    buttonStyle={{backgroundColor: 'black'}}
                     onPress={showAlert}/>
             </View>
             </View> : 
