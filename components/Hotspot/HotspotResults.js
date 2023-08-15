@@ -16,6 +16,7 @@ export default function HotspotResults({navigation, route}) {
 
     const getCurrentTimestamp = () => new Date().getTime();
 
+    // Stores the data collected when we land on the results page 
     useEffect(()=> {
         
         if (Platform.OS !== 'web') {

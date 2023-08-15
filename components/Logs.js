@@ -12,6 +12,7 @@ export default function Logs() {
     const [updatedGlobalList, setUpdatedGlobalList] = useState([]);
     const [isWeb, setIsWeb] = useState(false);
 
+    // Fetches all stored data as soon as we land on the page
     useEffect(() => {
 
         if (Platform.OS === 'web') {
@@ -31,6 +32,7 @@ export default function Logs() {
 
     }, []);
     
+    // Separated the Hotspot entries and the Global entries
     useEffect(() => {
 
         const newHotspotDataList = [];
@@ -50,6 +52,7 @@ export default function Logs() {
 
     }, [data]);
 
+    // Reconstructing the Global data to display it
     useEffect(() => {
 
         const newGlobalDataList = [];
@@ -87,6 +90,7 @@ export default function Logs() {
         )
     }
 
+    // Function to operate the delete all data feature
     const deleteAllData = async () => {
         try {
             await AsyncStore.deleteAllData();

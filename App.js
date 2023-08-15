@@ -44,17 +44,25 @@ export default function App() {
   return (
     <NavigationContainer>
       <DrawerNav.Navigator initialRouteName="Home">
-        <DrawerNav.Screen name="Home" component={Home} />
-        <DrawerNav.Screen name="Hotspot" component={HotspotStack} 
+        <DrawerNav.Screen 
+          name="Home" 
+          component={Home} />
+        <DrawerNav.Screen 
+          name="Hotspot" 
+          component={HotspotStack} 
           options={({ route }) => ({
             headerTitle: getHotspotHeaderTitle(route),
           })}/>
-        <DrawerNav.Screen name="Global" component={Global} 
-        options={({ route }) => ({
-          headerTitle: getGlobalHeaderTitle(route),
-          headerShown: getGlobalHeaderShown(route)
-        })}/>
-        <DrawerNav.Screen name="Logs" component={Logs} 
+        <DrawerNav.Screen 
+          name="Global" 
+          component={Global} 
+          options={({ route }) => ({
+            headerTitle: getGlobalHeaderTitle(route),
+            headerShown: getGlobalHeaderShown(route)
+          })}/>
+        <DrawerNav.Screen 
+          name="Logs" 
+          component={Logs} 
           options={{
             unmountOnBlur: true
           }}/>

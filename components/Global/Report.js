@@ -12,6 +12,7 @@ export default function Report({navigation, route}) {
 
     let allFieldTypes = fieldsByTye.getAllReportFields();
 
+    // Stores the data collected when we land on the results page
     useEffect(() => {
 
         if (Platform.OS !== 'web') {

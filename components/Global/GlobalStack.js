@@ -9,13 +9,9 @@ const Stack = createStackNavigator();
 export default function GlobalStack() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen 
-        name="Estimate" 
-        component={Estimate} />
+      <Stack.Screen name="Estimate" component={Estimate} />
       <Stack.Screen name="Fields" component={Fields} />
-      <Stack.Screen 
-        name="Report"
-        component={Report} />
+      <Stack.Screen name="Report" component={Report} />
     </Stack.Navigator>
   );
 }
