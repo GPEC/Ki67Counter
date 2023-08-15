@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Ki67ScoresByType } from '../../app/Ki67Score';
 import React, { useEffect } from 'react';
 import AsyncStore from '../../data/AsyncStore';
@@ -28,7 +28,7 @@ export default function Report({navigation, route}) {
     }, [])
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.rowContainer}>
                 <Text style={styles.mainText}>Unweighted global score:</Text>
                 <Text style={styles.scoreText}>{ki67Score.getGlobalScore()}%</Text>
@@ -73,7 +73,7 @@ export default function Report({navigation, route}) {
                     })}
                 />
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
