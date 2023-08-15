@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Platform, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import Slider from '@react-native-community/slider';
 import React, { useState, useEffect } from 'react';
 import { ScoringFieldsAllocator } from '../../app/scoringFieldsAllocator';
@@ -223,7 +223,7 @@ export default function Global({ navigation }) {
 
     return (
         <TouchableWithoutFeedback onPress={ () => { Keyboard.dismiss() } }>
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
 
             <Text style={styles.mainText}>{generateText()}</Text>
 
@@ -295,7 +295,7 @@ export default function Global({ navigation }) {
             <View style={styles.next}>
                 <Button style={styles.nextButton} color='black' title='Next' onPress={goToFields} disabled={isButtonDisabled} />
             </View>
-        </View>
+        </ScrollView>
         </TouchableWithoutFeedback>
     )
 }
