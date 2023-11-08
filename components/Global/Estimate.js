@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Platform, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Platform, Keyboard, TouchableWithoutFeedback, ScrollView, SafeAreaView } from 'react-native';
 import Slider from '@react-native-community/slider';
 import React, { useState, useEffect } from 'react';
 import { ScoringFieldsAllocator } from '../../app/scoringFieldsAllocator';
@@ -78,9 +78,9 @@ export default function Global({ navigation }) {
         if(value+sliderMedValue+sliderLowValue+sliderHighValue>100) {
             const acceptableValue = 100-(sliderMedValue+sliderLowValue+sliderHighValue);
             setNegUpperLimit(acceptableValue);
-            if(!isWeb)
+            if(!isWeb) {
                 setNegSliderValue(acceptableValue);
-            if(isWeb) {
+            } else {
                 setNegSliderValue(acceptableValue+0.1);
                 setNegSliderValue(acceptableValue-0.1);
     
@@ -95,8 +95,9 @@ export default function Global({ navigation }) {
             setNegUpperLimit(100);
             setNegSliderValue(value);
         }
-        if(isWeb)
+        if(isWeb) {
             makeSureAllSlidersZeroOrAbove();
+        }
     };
     const handleLowSliderChange = (value) => {
         value = Math.round(value);
@@ -104,7 +105,9 @@ export default function Global({ navigation }) {
         if(value+sliderMedValue+sliderNegValue+sliderHighValue>100) {
             const acceptableValue = 100-(sliderMedValue+sliderNegValue+sliderHighValue);
             setLowUpperLimit(acceptableValue);
-            if(isWeb) {
+            if(!isWeb) {
+                setLowSliderValue(acceptableValue);
+            } else {
                 setLowSliderValue(acceptableValue + 0.1);
                 setLowSliderValue(acceptableValue - 0.1);
     
@@ -114,14 +117,14 @@ export default function Global({ navigation }) {
                 setMedSliderValue(sliderMedValue - 0.1);
                 setHighSliderValue(sliderHighValue - 0.1);
                 setNegSliderValue(sliderNegValue - 0.1);
-            } else
-                setLowSliderValue(acceptableValue);
+            } 
         } else {
             setLowSliderValue(value);
             setLowUpperLimit(100);
         }
-        if(isWeb)
+        if(isWeb) {
             makeSureAllSlidersZeroOrAbove();
+        }
     };
     const handleMedSliderChange = (value) => {
         value = Math.round(value);
@@ -129,9 +132,9 @@ export default function Global({ navigation }) {
         if(value+sliderNegValue+sliderLowValue+sliderHighValue>100) {
             const acceptableValue =  100-(sliderNegValue+sliderLowValue+sliderHighValue)
             setMedUpperLimit(acceptableValue);
-            if(!isWeb)
+            if(!isWeb) {
                 setMedSliderValue(acceptableValue);
-            else {
+            } else {
                 setMedSliderValue(acceptableValue + 0.1);
                 setMedSliderValue(acceptableValue - 0.1);
     
@@ -146,8 +149,9 @@ export default function Global({ navigation }) {
             setMedSliderValue(value);
             setMedUpperLimit(100)
         }
-        if(isWeb)
+        if(isWeb) {
             makeSureAllSlidersZeroOrAbove();
+        }
     };
     const handleHighSliderChange = (value) => {
         value = Math.round(value);
@@ -155,10 +159,9 @@ export default function Global({ navigation }) {
         if(value+sliderMedValue+sliderLowValue+sliderNegValue>100) {
             const acceptableValue = 100-(sliderMedValue+sliderLowValue+sliderNegValue);
             setHighUpperLimit(acceptableValue);
-            if(!isWeb)
+            if(!isWeb) {
                 setHighSliderValue(acceptableValue);
-            
-            if(isWeb) {
+            } else {
                 setHighSliderValue(acceptableValue + 0.1);
                 setHighSliderValue(acceptableValue - 0.1);
 
@@ -173,8 +176,9 @@ export default function Global({ navigation }) {
             setHighSliderValue(value);
             setHighUpperLimit(100);
         }
-        if(isWeb)
+        if(isWeb) {
             makeSureAllSlidersZeroOrAbove();
+        }
     };
     /*********************    SLIDER CHANGE HANDLERS END   ****************************/
 
@@ -222,8 +226,9 @@ export default function Global({ navigation }) {
     }, [])
 
     return (
-        <TouchableWithoutFeedback onPress={ () => { Keyboard.dismiss() } }>
-        <ScrollView style={styles.container}>
+        <SafeAreaView style={styles.container}>
+        <ScrollView 
+        style={styles.container}>
 
             <Text style={styles.mainText}>{generateText()}</Text>
 
@@ -291,18 +296,19 @@ export default function Global({ navigation }) {
                 />
                 <Text style={styles.textRight}>{sliderHighValue}%</Text>
             </View>
+            <View style={styles.spacerhorizontalLine} />
 
-            <View style={styles.next}>
+        </ScrollView>
+        <View style={styles.next}>
                 <Button style={styles.nextButton} color='black' title='Next' onPress={goToFields} disabled={isButtonDisabled} />
             </View>
-        </ScrollView>
-        </TouchableWithoutFeedback>
+        </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, // Makes the container take up the entire screen height
+        flex: 1 // Makes the container take up the entire screen height
     },
     mainText: {
         margin: 20,
@@ -328,6 +334,11 @@ const styles = StyleSheet.create({
         borderBottomColor: 'grey',
         borderBottomWidth: StyleSheet.hairlineWidth,
         margin: 30,
+    },
+    spacerhorizontalLine: {
+        borderBottomColor: 'white',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        margin: 50,
     },
     leftText: {
         marginLeft: 25,
