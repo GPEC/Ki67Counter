@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ki67CounterApp",
     "slug": "Ki67CounterApp",
-    "version": "1.0.0",
+    "version": "1.1.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -24,10 +24,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "ca.ubc.gpec.ki67counter",
+      "versionCode":6
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "59f7fd25-21e5-44b8-ab1e-2c79997f1a02"
+      }
     }
   }
 }
