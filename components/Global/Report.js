@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
-import { Ki67ScoresByType } from '../../app/Ki67Score';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button } from "react-native-elements";
 import AsyncStore from '../../data/AsyncStore';
-import  {Button} from "react-native-elements";
+import { Ki67ScoresByType } from '../../lib/Ki67Score';
 
 export default function Report({navigation, route}) {
 

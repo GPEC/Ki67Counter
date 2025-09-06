@@ -1,7 +1,6 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Ki67Score } from '../../lib/Ki67Score';
 import Field from './Fields';
-import { Ki67Score } from '../../app/Ki67Score';
 
 const Stack = createStackNavigator();
 

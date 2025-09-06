@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import AsyncStore from '../data/AsyncStore';
-import { View, Text, StyleSheet, ScrollView, Alert, Platform } from 'react-native';
-import { Ki67ScoresByType, Ki67Score } from '../app/Ki67Score';
+import { useEffect, useState } from 'react';
+import { Alert, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from "react-native-elements";
+import AsyncStore from '../data/AsyncStore';
+import { Ki67Score, Ki67ScoresByType } from '../lib/Ki67Score';
 
 export default function Logs() {
 

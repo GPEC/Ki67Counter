@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, TextInput, Platform, Keyboard, TouchableWithoutFeedback, ScrollView, SafeAreaView } from 'react-native';
 import Slider from '@react-native-community/slider';
-import React, { useState, useEffect } from 'react';
-import { ScoringFieldsAllocator } from '../../app/scoringFieldsAllocator';
-import { Ki67Score } from '../../app/Ki67Score';
+import { useEffect, useState } from 'react';
+import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Button } from "react-native-elements";
+import { Ki67Score } from '../../lib/Ki67Score';
+import { ScoringFieldsAllocator } from '../../lib/scoringFieldsAllocator';
 
 export default function Global({ navigation }) {
 
